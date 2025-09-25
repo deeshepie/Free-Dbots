@@ -1,0 +1,165 @@
+<xml xmlns="http://www.w3.org/1999/xhtml">
+  <variables>
+    <variable id="loss_counter">Loss Counter</variable>
+    <variable id="martingale_trigger">Martingale Trigger</variable>
+    <variable id="prediction">Prediction</variable>
+    <variable id="base_stake">Base Stake</variable>
+    <variable id="current_stake">Current Stake</variable>
+    <variable id="stop_loss">Stop Loss</variable>
+    <variable id="profit_target">Profit Target</variable>
+    <variable id="max_multiplier">Max Multiplier</variable>
+    <variable id="win_streak">Win Streak</variable>
+  </variables>
+
+  <block type="trade" id="main_trade" x="-454" y="-9">
+    <field name="MARKET_LIST">synthetic_index</field>
+    <field name="SUBMARKET_LIST">random_index</field>
+    <field name="SYMBOL_LIST">R_100</field>
+    <field name="TRADETYPECAT_LIST">digits</field>
+    <field name="TRADETYPE_LIST">overunder</field>
+    <field name="TYPE_LIST">DIGITOVER</field>
+    <field name="CANDLEINTERVAL_LIST">60</field>
+    <field name="TIME_MACHINE_ENABLED">FALSE</field>
+    <field name="RESTARTONERROR">FALSE</field>
+    
+    <statement name="INITIALIZATION">
+      <block type="variables_set" id="set_loss_counter">
+        <field name="VAR" id="loss_counter">Loss Counter</field>
+        <value name="VALUE">
+          <block type="math_number" id="num0">
+            <field name="NUM">0</field>
+          </block>
+        </value>
+        <next>
+          <block type="variables_set" id="set_martingale_trigger">
+            <field name="VAR" id="martingale_trigger">Martingale Trigger</field>
+            <value name="VALUE">
+              <block type="math_number" id="num3">
+                <field name="NUM">3</field>
+              </block>
+            </value>
+            <next>
+              <block type="variables_set" id="set_prediction">
+                <field name="VAR" id="prediction">Prediction</field>
+                <value name="VALUE">
+                  <block type="math_number" id="num7">
+                    <field name="NUM">7</field>
+                  </block>
+                </value>
+                <next>
+                  <block type="variables_set" id="set_base_stake">
+                    <field name="VAR" id="base_stake">Base Stake</field>
+                    <value name="VALUE">
+                      <block type="math_number" id="num035">
+                        <field name="NUM">0.35</field>
+                      </block>
+                    </value>
+                    <next>
+                      <block type="variables_set" id="set_current_stake">
+                        <field name="VAR" id="current_stake">Current Stake</field>
+                        <value name="VALUE">
+                          <block type="math_number" id="num035_2">
+                            <field name="NUM">0.35</field>
+                          </block>
+                        </value>
+                        <next>
+                          <block type="variables_set" id="set_stop_loss">
+                            <field name="VAR" id="stop_loss">Stop Loss</field>
+                            <value name="VALUE">
+                              <block type="math_number" id="num50">
+                                <field name="NUM">50</field>
+                              </block>
+                            </value>
+                            <next>
+                              <block type="variables_set" id="set_profit_target">
+                                <field name="VAR" id="profit_target">Profit Target</field>
+                                <value name="VALUE">
+                                  <block type="math_number" id="num25">
+                                    <field name="NUM">25</field>
+                                  </block>
+                                </value>
+                                <next>
+                                  <block type="variables_set" id="set_max_multiplier">
+                                    <field name="VAR" id="max_multiplier">Max Multiplier</field>
+                                    <value name="VALUE">
+                                      <block type="math_number" id="num10">
+                                        <field name="NUM">10</field>
+                                      </block>
+                                    </value>
+                                    <next>
+                                      <block type="variables_set" id="set_win_streak">
+                                        <field name="VAR" id="win_streak">Win Streak</field>
+                                        <value name="VALUE">
+                                          <block type="math_number" id="num0_2">
+                                            <field name="NUM">0</field>
+                                          </block>
+                                        </value>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+
+    <statement name="SUBMARKET">
+      <block type="tradeOptions" id="trade_options">
+        <field name="DURATIONTYPE_LIST">t</field>
+        <field name="CURRENCY_LIST">USD</field>
+        <value name="DURATION">
+          <block type="math_number" id="duration_3">
+            <field name="NUM">3</field>
+          </block>
+        </value>
+        <value name="AMOUNT">
+          <block type="variables_get" id="get_current_stake">
+            <field name="VAR" id="current_stake">Current Stake</field>
+          </block>
+        </value>
+        <value name="PREDICTION">
+          <block type="variables_get" id="get_prediction">
+            <field name="VAR" id="prediction">Prediction</field>
+          </block>
+        </value>
+      </block>
+    </statement>
+  </block>
+
+  <block type="before_purchase" id="before_purchase_block" x="-200" y="200">
+    <statement name="BEFOREPURCHASE_STACK">
+      <block type="notify" id="notify_before">
+        <field name="NOTIFICATION_TYPE">info</field>
+        <field name="NOTIFICATION_SOUND">silent</field>
+        <value name="MESSAGE">
+          <block type="text_join" id="message_before">
+            <mutation items="3"></mutation>
+            <value name="ADD0">
+              <block type="text" id="text_stake">
+                <field name="TEXT">Stake: </field>
+              </block>
+            </value>
+            <value name="ADD1">
+              <block type="variables_get" id="get_stake_display">
+                <field name="VAR" id="current_stake">Current Stake</field>
+              </block>
+            </value>
+            <value name="ADD2">
+              <block type="text" id="text_pred">
+                <field name="TEXT"> | Prediction: &gt;=7</field>
+              </block>
+            </value>
+          </block>
+        </value>
+        <next>
+          <block type="p
