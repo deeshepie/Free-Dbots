@@ -1,0 +1,394 @@
+<xml xmlns="http://www.w3.org/1999/xhtml">
+  <variables>
+    <variable id="loss_counter">Loss Counter</variable>
+    <variable id="martingale_trigger">Martingale After Losses</variable>
+    <variable id="prediction">Prediction</variable>
+    <variable id="base_stake">Base Stake</variable>
+    <variable id="current_stake">Current Stake</variable>
+    <variable id="stop_loss">Stop Loss</variable>
+    <variable id="profit_target">Profit Target</variable>
+    <variable id="max_multiplier">Max Multiplier</variable>
+    <variable id="win_streak">Win Streak</variable>
+  </variables>
+
+  <block type="trade" id="main_trade" x="-454" y="-9">
+    <field name="MARKET_LIST">synthetic_index</field>
+    <field name="SUBMARKET_LIST">random_index</field>
+    <field name="SYMBOL_LIST">R_100</field>
+    <field name="TRADETYPECAT_LIST">digits</field>
+    <field name="TRADETYPE_LIST">overunder</field>
+    <field name="TYPE_LIST">DIGITOVER</field>
+    <field name="CANDLEINTERVAL_LIST">60</field>
+    
+    <statement name="INITIALIZATION">
+      <block type="variables_set" id="init1">
+        <field name="VAR" id="loss_counter">Loss Counter</field>
+        <value name="VALUE">
+          <block type="math_number">
+            <field name="NUM">0</field>
+          </block>
+        </value>
+        <next>
+          <block type="variables_set" id="init2">
+            <field name="VAR" id="martingale_trigger">Martingale After Losses</field>
+            <value name="VALUE">
+              <block type="math_number">
+                <field name="NUM">3</field>
+              </block>
+            </value>
+            <next>
+              <block type="variables_set" id="init3">
+                <field name="VAR" id="prediction">Prediction</field>
+                <value name="VALUE">
+                  <block type="math_number">
+                    <field name="NUM">7</field>
+                  </block>
+                </value>
+                <next>
+                  <block type="variables_set" id="init4">
+                    <field name="VAR" id="base_stake">Base Stake</field>
+                    <value name="VALUE">
+                      <block type="math_number">
+                        <field name="NUM">0.35</field>
+                      </block>
+                    </value>
+                    <next>
+                      <block type="variables_set" id="init5">
+                        <field name="VAR" id="current_stake">Current Stake</field>
+                        <value name="VALUE">
+                          <block type="math_number">
+                            <field name="NUM">0.35</field>
+                          </block>
+                        </value>
+                        <next>
+                          <block type="variables_set" id="init6">
+                            <field name="VAR" id="stop_loss">Stop Loss</field>
+                            <value name="VALUE">
+                              <block type="math_number">
+                                <field name="NUM">50</field>
+                              </block>
+                            </value>
+                            <next>
+                              <block type="variables_set" id="init7">
+                                <field name="VAR" id="profit_target">Profit Target</field>
+                                <value name="VALUE">
+                                  <block type="math_number">
+                                    <field name="NUM">25</field>
+                                  </block>
+                                </value>
+                                <next>
+                                  <block type="variables_set" id="init8">
+                                    <field name="VAR" id="max_multiplier">Max Multiplier</field>
+                                    <value name="VALUE">
+                                      <block type="math_number">
+                                        <field name="NUM">10</field>
+                                      </block>
+                                    </value>
+                                    <next>
+                                      <block type="variables_set" id="init9">
+                                        <field name="VAR" id="win_streak">Win Streak</field>
+                                        <value name="VALUE">
+                                          <block type="math_number">
+                                            <field name="NUM">0</field>
+                                          </block>
+                                        </value>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+
+    <statement name="SUBMARKET">
+      <block type="tradeOptions">
+        <field name="DURATIONTYPE_LIST">t</field>
+        <field name="CURRENCY_LIST">USD</field>
+        <value name="DURATION">
+          <block type="math_number">
+            <field name="NUM">3</field>
+          </block>
+        </value>
+        <value name="AMOUNT">
+          <block type="variables_get">
+            <field name="VAR" id="current_stake">Current Stake</field>
+          </block>
+        </value>
+        <value name="PREDICTION">
+          <block type="variables_get">
+            <field name="VAR" id="prediction">Prediction</field>
+          </block>
+        </value>
+      </block>
+    </statement>
+  </block>
+
+  <block type="after_purchase" id="after_purchase_block" x="200" y="100">
+    <statement name="AFTERPURCHASE_STACK">
+      <block type="controls_if" id="win_loss_check">
+        <mutation else="1"></mutation>
+        <value name="IF0">
+          <block type="contract_check_result" id="check_win">
+            <field name="CHECK_RESULT">win</field>
+          </block>
+        </value>
+        <statement name="DO0">
+          <!-- WIN LOGIC -->
+          <block type="variables_set" id="reset_loss_counter">
+            <field name="VAR" id="loss_counter">Loss Counter</field>
+            <value name="VALUE">
+              <block type="math_number">
+                <field name="NUM">0</field>
+              </block>
+            </value>
+            <next>
+              <block type="math_change" id="increase_win_streak">
+                <field name="VAR" id="win_streak">Win Streak</field>
+                <value name="DELTA">
+                  <block type="math_number">
+                    <field name="NUM">1</field>
+                  </block>
+                </value>
+                <next>
+                  <block type="controls_if" id="win_streak_check">
+                    <mutation else="1"></mutation>
+                    <value name="IF0">
+                      <block type="logic_compare" id="check_3_wins">
+                        <field name="OP">GTE</field>
+                        <value name="A">
+                          <block type="variables_get" id="get_win_streak">
+                            <field name="VAR" id="win_streak">Win Streak</field>
+                          </block>
+                        </value>
+                        <value name="B">
+                          <block type="math_number">
+                            <field name="NUM">3</field>
+                          </block>
+                        </value>
+                      </block>
+                    </value>
+                    <statement name="DO0">
+                      <block type="variables_set" id="increase_stake_after_wins">
+                        <field name="VAR" id="current_stake">Current Stake</field>
+                        <value name="VALUE">
+                          <block type="math_arithmetic" id="calc_win_stake">
+                            <field name="OP">MULTIPLY</field>
+                            <value name="A">
+                              <block type="variables_get" id="get_base_stake">
+                                <field name="VAR" id="base_stake">Base Stake</field>
+                              </block>
+                            </value>
+                            <value name="B">
+                              <block type="math_number">
+                                <field name="NUM">1.5</field>
+                              </block>
+                            </value>
+                          </block>
+                        </value>
+                      </block>
+                    </statement>
+                    <statement name="ELSE">
+                      <block type="variables_set" id="reset_to_base_stake">
+                        <field name="VAR" id="current_stake">Current Stake</field>
+                        <value name="VALUE">
+                          <block type="variables_get" id="get_base_stake2">
+                            <field name="VAR" id="base_stake">Base Stake</field>
+                          </block>
+                        </value>
+                      </block>
+                    </statement>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </statement>
+        <statement name="ELSE">
+          <!-- LOSS LOGIC -->
+          <block type="math_change" id="increase_loss_counter">
+            <field name="VAR" id="loss_counter">Loss Counter</field>
+            <value name="DELTA">
+              <block type="math_number">
+                <field name="NUM">1</field>
+              </block>
+            </value>
+            <next>
+              <block type="variables_set" id="reset_win_streak">
+                <field name="VAR" id="win_streak">Win Streak</field>
+                <value name="VALUE">
+                  <block type="math_number">
+                    <field name="NUM">0</field>
+                  </block>
+                </value>
+                <next>
+                  <block type="controls_if" id="martingale_check">
+                    <value name="IF0">
+                      <block type="logic_compare" id="check_loss_threshold">
+                        <field name="OP">GTE</field>
+                        <value name="A">
+                          <block type="variables_get" id="get_loss_counter">
+                            <field name="VAR" id="loss_counter">Loss Counter</field>
+                          </block>
+                        </value>
+                        <value name="B">
+                          <block type="variables_get" id="get_martingale_trigger">
+                            <field name="VAR" id="martingale_trigger">Martingale After Losses</field>
+                          </block>
+                        </value>
+                      </block>
+                    </value>
+                    <statement name="DO0">
+                      <block type="variables_set" id="apply_martingale">
+                        <field name="VAR" id="current_stake">Current Stake</field>
+                        <value name="VALUE">
+                          <block type="math_arithmetic" id="calc_martingale_stake">
+                            <field name="OP">MULTIPLY</field>
+                            <value name="A">
+                              <block type="variables_get" id="get_current_stake">
+                                <field name="VAR" id="current_stake">Current Stake</field>
+                              </block>
+                            </value>
+                            <value name="B">
+                              <block type="math_number">
+                                <field name="NUM">2.5</field>
+                              </block>
+                            </value>
+                          </block>
+                        </value>
+                        <next>
+                          <block type="controls_if" id="check_max_multiplier">
+                            <value name="IF0">
+                              <block type="logic_compare" id="compare_stake_limit">
+                                <field name="OP">GT</field>
+                                <value name="A">
+                                  <block type="variables_get" id="get_current_stake2">
+                                    <field name="VAR" id="current_stake">Current Stake</field>
+                                  </block>
+                                </value>
+                                <value name="B">
+                                  <block type="math_arithmetic" id="calc_max_stake">
+                                    <field name="OP">MULTIPLY</field>
+                                    <value name="A">
+                                      <block type="variables_get" id="get_base_stake3">
+                                        <field name="VAR" id="base_stake">Base Stake</field>
+                                      </block>
+                                    </value>
+                                    <value name="B">
+                                      <block type="variables_get" id="get_max_multiplier">
+                                        <field name="VAR" id="max_multiplier">Max Multiplier</field>
+                                      </block>
+                                    </value>
+                                  </block>
+                                </value>
+                              </block>
+                            </value>
+                            <statement name="DO0">
+                              <block type="variables_set" id="reset_stake">
+                                <field name="VAR" id="current_stake">Current Stake</field>
+                                <value name="VALUE">
+                                  <block type="variables_get" id="get_base_stake4">
+                                    <field name="VAR" id="base_stake">Base Stake</field>
+                                  </block>
+                                </value>
+                                <next>
+                                  <block type="variables_set" id="reset_loss_counter2">
+                                    <field name="VAR" id="loss_counter">Loss Counter</field>
+                                    <value name="VALUE">
+                                      <block type="math_number">
+                                        <field name="NUM">0</field>
+                                      </block>
+                                    </value>
+                                  </block>
+                                </next>
+                              </block>
+                            </statement>
+                          </block>
+                        </next>
+                      </block>
+                    </statement>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </statement>
+        <next>
+          <block type="controls_if" id="risk_management_check">
+            <value name="IF0">
+              <block type="logic_operation" id="stop_conditions">
+                <field name="OP">OR</field>
+                <value name="A">
+                  <block type="logic_compare" id="check_stop_loss">
+                    <field name="OP">LTE</field>
+                    <value name="A">
+                      <block type="total_profit" id="get_total_profit"></block>
+                    </value>
+                    <value name="B">
+                      <block type="math_arithmetic" id="calc_negative_stop_loss">
+                        <field name="OP">MULTIPLY</field>
+                        <value name="A">
+                          <block type="variables_get" id="get_stop_loss">
+                            <field name="VAR" id="stop_loss">Stop Loss</field>
+                          </block>
+                        </value>
+                        <value name="B">
+                          <block type="math_number">
+                            <field name="NUM">-1</field>
+                          </block>
+                        </value>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+                <value name="B">
+                  <block type="logic_compare" id="check_profit_target">
+                    <field name="OP">GTE</field>
+                    <value name="A">
+                      <block type="total_profit" id="get_total_profit2"></block>
+                    </value>
+                    <value name="B">
+                      <block type="variables_get" id="get_profit_target">
+                        <field name="VAR" id="profit_target">Profit Target</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+              </block>
+            </value>
+            <statement name="DO0">
+              <block type="text_print" id="end_session">
+                <value name="TEXT">
+                  <block type="text_join" id="final_message">
+                    <mutation items="2"></mutation>
+                    <value name="ADD0">
+                      <block type="text">
+                        <field name="TEXT">Session Ended. Total Profit: </field>
+                      </block>
+                    </value>
+                    <value name="ADD1">
+                      <block type="total_profit" id="get_final_profit"></block>
+                    </value>
+                  </block>
+                </value>
+              </block>
+            </statement>
+            <statement name="ELSE">
+              <block type="trade_again" id="continue_trading"></block>
+            </statement>
+          </block>
+        </next>
+      </block>
+    </statement>
+  </block>
+</xml>
